@@ -1,211 +1,373 @@
 package com.cse110team14.placeit.test;
 
+import java.util.Calendar;
+
 import com.cse110team14.placeit.MainActivity;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.LatLng;
-
-import android.content.Intent;
-import android.location.Location;
-import android.net.Uri;
-import android.provider.Settings;
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.TouchUtils;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import com.robotium.solo.Solo;
-import android.content.ContentResolver;
+import android.test.ActivityInstrumentationTestCase2;
+import com.cse110team14.placeit.*;
 
-public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> 
-{
-  private static Solo solo;
-  
-  private static MainActivity mActivity;
-  private Button activeButton;
-  private Button createButton;
-  private Button pulledButton;
-  private Button findButton;
-  private Button retrackButton;
-  private EditText mAddreass;
-  private EditText description;
-  private EditText title;
-  private EditText date;
-  private EditText color;
-    
-  //create a test fixure
-public MainActivityTest() 
-  {
-	super("com.cse110team14.placeit",MainActivity.class);
-	Log.i("tester","within MainActivityTest() constructor");
-  }
-  
-  @Override
-  public void setUp() throws Exception 
-  {
-    super.setUp();
-    //Find views
-    mActivity = this.getActivity();
-    activeButton = (Button)mActivity.findViewById(com.cse110team14.placeit.R.id.active);
-    createButton = (Button)mActivity.findViewById(com.cse110team14.placeit.R.id.create);
-    pulledButton = (Button)mActivity.findViewById(com.cse110team14.placeit.R.id.pulled);
-    findButton = (Button)mActivity.findViewById(com.cse110team14.placeit.R.id.btn_show);
-    retrackButton = (Button)mActivity.findViewById(com.cse110team14.placeit.R.id.retrack);
-    mAddreass = (EditText)mActivity.findViewById(com.cse110team14.placeit.R.id.et_place);
-    title = (EditText)mActivity.findViewById(com.cse110team14.placeit.R.id.ItemTitle);
-    date = (EditText)mActivity.findViewById(com.cse110team14.placeit.R.id.dateToBeReminded);
-    color = (EditText)mActivity.findViewById(com.cse110team14.placeit.R.id.color);
-    description = (EditText)mActivity.findViewById(com.cse110team14.placeit.R.id.description);
-  }
-  
+/* 
+ * Class name: Tests for implementation of MainActivity
+ * 
+ */
 
-  @Override
-  public void tearDown() throws Exception 
-  {
-    //tearDown() is run after a test case has finished. 
-    //finishOpenedActivities() will finish all the activities that have been opened during the test execution.
-    super.tearDown();
+public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
+	private Solo solo;
+ 	
+	/* Create test fixture */
+	public MainActivityTest(){
+		super(MainActivity.class);
+	}
+	
+	@Override
+	public void setUp() throws Exception{
+		solo = new Solo(getInstrumentation(), getActivity());
+	}
+	
+	@Override
+	public void tearDown() throws Exception {
+		//tearDown() is run after a test case has finished. 
+		//finishOpenedActivities() will finish all the activities that have been opened during the test execution.
+		solo.finishOpenedActivities();
+	}
+	
+	/* Method name: testShowMap
+	 * Description: Scenario test for User Story 1
+	 *   Scenario 1: Given the GPS is enabled,
+	 *               When the application is opened
+	 *               Then a map is displayed on the screen 
+	 *               without any error message
+	 */
+	public void testShowMap(){
+		// Assumed the Given and When functions correctly
+		solo.takeScreenshot();
+		/* When the app is correctly opened, the map and the button
+		 * should show up on the map */
+		boolean buttonThere = solo.searchText("Find")
+							&& solo.searchText("Retrack")
+							&& solo.searchText("Create")
+							&& solo.searchText("Active")
+							&& solo.searchText("Pulled");
+	    assertTrue("Some button is missing there",buttonThere);
    }
-  
-  public void testPreconditions(){
-	  assertNotNull(mActivity);
-	  assertNotNull(activeButton);
-	  assertNotNull(createButton);
-	  assertNotNull(pulledButton);
-	  assertNotNull(findButton);
-	  assertNotNull(retrackButton);
-	  assertNotNull(mAddreass);
-  }
-  
-  public void testEnterAddreass(){
-	  //clearing the enter addreass edit text
-	  mAddreass.clearComposingText();
-	  //tapping the mAddreass edit text through TouchUtils class
-	  TouchUtils.tapView(this, mAddreass);
-	  //sending input to mAddreass
-	  sendKeys(KeyEvent.KEYCODE_U,KeyEvent.KEYCODE_C,
-			  KeyEvent.KEYCODE_S,KeyEvent.KEYCODE_D);
-	  //TouchUtils.clickView(this,findButton);
-	  String tmpAddreass = null;
-	  try{
-		  //getting the input from the editText
-		  tmpAddreass = mAddreass.getText().toString();
-	  }catch(NullPointerException e){
-		  assertNotNull("mAddress is null",e.getMessage());
-	  }
-	  //System.out.println(mAddreass.toString());
-	  Log.e("EnterAddreass",mAddreass.toString());
-	  assertNotNull(tmpAddreass);
-	  assertEquals(tmpAddreass,"ucsd");
-  }
-  
-   public void testCreateButton(){
-	  solo = new Solo(getInstrumentation(),getActivity());
+	
+	/* Test methods for User Story 2 Place Reminders */
+	
+	/* Method name: testPlaceItTemplate
+	 * Description: Scenario 1
+	 *   Given a user has signal
+	 *   And wants to set a PlacIt using an address
+	 *   When the user enters an address
+	 *   Then a template to create a Place-It should presented
+	 */
+	public void testPlaceItTemplate(){
+	  //Assume user's device has signal
+	  //When user enters a valid address
+	  solo.enterText(0,"UCSD");
+	  solo.clickOnButton("Find");  
+	  assertTrue("The addreass is not UCSD",solo.getEditText(0).getText().toString().equals("UCSD"));
+	  //When the user clicks the create button
 	  solo.clickOnButton("Create");
-	  solo.enterText(0, "First PlaceIt");
-	  EditText e1 = (EditText)mActivity.findViewById(com.cse110team14.placeit.R.id.description);
-	  solo.enterText(e1, "Created on 2/9/14");
-	  /*solo.enterText(2,"2/9/14");
-	  solo.enterText(3,"blue");
-	  solo.enterText(index, text);*/
-	  solo.goBack();
-	  assertTrue(true);
+	  solo.hideSoftKeyboard();
+	  solo.takeScreenshot();
 	  
-	  TouchUtils.tapView(this, createButton);
-	  TouchUtils.tapView(this,title);
-	  sendKeys(KeyEvent.KEYCODE_M);
-	  TouchUtils.clickView(this, description);
-	  sendKeys(KeyEvent.KEYCODE_A);
-	  TouchUtils.tapView(this, date);
-      sendKeys(KeyEvent.KEYCODE_1,KeyEvent.KEYCODE_SLASH,KeyEvent.KEYCODE_1,KeyEvent.KEYCODE_SLASH,
-    		  KeyEvent.KEYCODE_1,KeyEvent.KEYCODE_1);
-      TouchUtils.tapView(this, color);
-      sendKeys(KeyEvent.KEYCODE_B,KeyEvent.KEYCODE_L,KeyEvent.KEYCODE_U,
-    		  KeyEvent.KEYCODE_E);
-      
-      assertEquals(title.getText().toString(),"m");
-      assertEquals(description.getText().toString(),"a");
-      assertEquals(date.getText().toString(),"1/1/11");
-      assertEquals(color.getText().toString(),"blue");
-  }
-  
-   //write  a method for given
-   /*void gpsEnabled(){
-     Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-     intent.putExtra("enabled", true);
-     this.ctx.sendBroadcast(intent);
-     String GPSProvider = Settings.Secure.getString(ctx.getContentResolver(),
-				Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-		//GPS is enabled
-		if(!GPSProvider.contains("gps")){
-		  final Intent poke = new Intent();
-		  poke.setClassName("com.android.settings",
-				  "com.android.settings.widget.SettingsAppWidgetProvider");
-		  poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-		  poke.setData(Uri.parse("3"));
-		  sendBroadcast(poke);
-		}
-	}*/
-  
-    //write  a method for given
-    static void gpsEnabled(){
-      //android doesn't allow we to touch the user private setting
-      //here we assumed gps is Enabled
-    	
-    }
-    //write a method for when
- 	static void applicationOpened(){
-      //setUp() is run before a test case is started. 
- 	  //This is where the solo object is created.
- 	  //mActivity = getActivity();
+	  //the template should contain repeat option and text field to enter info.
+	  boolean template = solo.searchButton("1 Week");
+	  boolean twoWeek = solo.searchButton("2 Weeks");
+	  boolean threeWeeks = solo.searchButton("3 Weeks");//it should be three weeks
+	  boolean monthly = solo.searchButton("Month");
+	  boolean noRepeat = solo.searchButton("None");
+	  
+	  boolean enter = solo.searchEditText("Title:")
+			  	   && solo.searchText("Description:")
+			  	   && solo.searchText("Location:")
+			  	   && solo.searchText("Color:");
+	  assertTrue("Places to enter information is missing",enter);
+	  assertTrue("Repeat placeit buttons are missing",template);
+	  assertTrue("Two weeks button is not there",twoWeek);
+	  assertTrue("Three weeks button is not there",threeWeeks);
+	  assertTrue("Monthly button is not there",monthly);
+	  
+	}
+	
+	/* Method Name : testMultiplePlaceItSameLocation
+	 * Description: Scenario 6 Multiple PlaceIt at same place
+	 *   Given a user has signal
+	 *   And wants to set PlaceIt at an identical location
+	 *   When they enter the address
+	 *   Then the user should be presented a PlaceIt template
+	 *   And be able to create the PlaceIt
+	 *   When the user attempts to review the location
+	 *   Then all set PlaceIts are displayed
+	 */
+	public void testMultiplePlaceItSameLocation(){
+		solo.clickOnButton("Create");
+		solo.enterText(0, "Firstone");//title
+		solo.enterText(1, "First one");//description
+		solo.enterText(2,"20,30");//location
+		solo.enterText(3,"Red");//color
+		solo.clickOnButton("1 Week");//repost period
+		solo.clickOnButton("Create the PlaceIt");
+		
+		//Create the second marker at the same location
+		solo.clickOnButton("Create");
+		solo.enterText(0, "Secondone");
+		solo.enterText(1, "Second one");
+		solo.enterText(2,"20,30");
+		solo.enterText(3,"Blue");
+		solo.clickOnButton("2 Weeks");
+		solo.clickOnButton("Create the PlaceIt");
+		
+		//Create the third marker at the same location
+		solo.clickOnButton("Create");
+		solo.enterText(0, "Thirdone");
+		solo.enterText(1, "Third one");
+		solo.enterText(2,"20,30");
+        solo.enterText(3,"Blue");
+		solo.clickOnButton("2 Weeks");
+		solo.clickOnButton("Create the PlaceIt");
+		//Check the active list
+		solo.clickOnButton("Active");
+		assertTrue("First marker is not created",solo.searchText("Firstone"));
+		assertTrue("Second marker is not created",solo.searchText("Secondone"));
+		assertTrue("Third marker is not created",solo.searchText("Thirdone"));
+	}
+	
+	/* Tests for User Story 3 */
+	
+	/* Method name: testReviewPlaceIt
+	 * Description: Scenario 1 
+	 *   Given a PlaceIt has been created
+	 *   And has not been triggered
+	 *   When the posted list is selected
+	 *   Then a PlaceIt is available for review
+	 */
+	public void testReivewPlaceIt(){
+		solo.clickOnButton("Create");
+		solo.enterText(0, "Review place it");
+		solo.enterText(1, "Test marker for review PlaceIt");
+		solo.enterText(2,"-20,-70");
+		solo.enterText(3,"Blue");
+		solo.clickOnButton("Minute");
+		solo.hideSoftKeyboard();
+		solo.clickOnButton("Create the PlaceIt");
+		solo.clickOnButton("Active");
+		solo.scrollToBottom();
+		solo.clickOnText("Title: Review place it");
+		solo.takeScreenshot();
+		boolean review = solo.searchText("Title: Review place it")
+				     &&  solo.searchText("Description: Test marker for review PlaceIt")
+				     &&  solo.searchText("Date to be Reminded:")
+				 	 &&  solo.searchText("Post Date and time:");
+		solo.clickOnButton("OK");
+		assertTrue("Template for review is missing something",review);	
+	}
+	
+	/* Method Name: testPulled()
+	 * Description: Scenario 4 
+	 *   Given a PlaceIt is available for review
+	 *   And the user chooses to delete the PlaceIt
+	 *   When the user confirms the delete
+	 *   Then the placeIt is no longer available for review
+	 */
+	public void testPulled(){
+		solo.clickOnButton("Active");
+		solo.clickOnText("Firstone");//delete the previous PlaceIt from the Active List
+		//try to delete the Test1 marker from the active list
+		solo.clickOnButton(2); //Moved to pulled down list
+		//try to go to the main menu and check the pulled down list
+		solo.goBackToActivity("MainActivity");
+		solo.clickOnButton("Pulled");
+		solo.takeScreenshot();
+		boolean isThere = solo.searchText("Firstone");
+		assertTrue("Test1 should be in the pulled down list",isThere);
+		solo.goBack();
+		solo.clickOnButton("Active");
+		solo.takeScreenshot();
+		boolean isNotThere = solo.searchText("Firstone");
+		assertFalse("The deleted PlaceIt is still in active list",
+				    isNotThere);
+	}
+	
+	
+	/* Method name: testDeletePulledDown
+	 * Description: Given the user created the PlaceIt
+	 * 				Then when the user review the PlaceIt in the Active List
+	 * 				And the user tries to delete it from the Active List
+	 * 				Then the PlaceIt goes to PulledDown List*/
+	public void testDeleteInPulledDown(){
+		solo.clickOnButton("Create");
+		solo.enterText(0, "DeleteInPulledDownList");
+		solo.enterText(1, "User Story 3 testPulledDown");
+		solo.enterText(2,"-30,-20");
+		solo.enterText(3,"Blue");
+		solo.clickOnButton("1 Week");
+		solo.hideSoftKeyboard();
+		solo.clickOnButton("Create the PlaceIt");
+		
+		solo.clickOnButton("Active");
+		solo.clickOnText("Title: DeleteInPulledDownList");
+		solo.clickOnButton(2);
+		solo.goBackToActivity("MainActivity");
+		solo.clickOnButton("Pulled");
+		solo.takeScreenshot();
+		boolean deleted = solo.searchText("Title: DeleteInPulledDownList");
+		assertTrue("Delete failed",deleted);
+		
+		solo.goBackToActivity("MainActivity");
+		solo.clickOnButton("Active");
+		solo.takeScreenshot();
+		boolean activeDelete = solo.searchText("Title: DeleteInPulledDownList");
+	    assertFalse("Delete from Active List failed",activeDelete);
+	}
+	
+	/* Test for User Story 4 */
+	
+	/* Method name : testDiscardNotification
+	 * Description: Scenario 1
+	 *   Given that a PlaceIt has been created
+	 *   And the user comes within 1/2 mile of the PlaceIt
+	 *   When the user receives the PlaceIt notification 
+	 *   And selects Discard
+	 *   Then the placeit becomes unavailable
+	 *   And is unavailable for review under the various list
+	 */
+	//Use Mocking to test notification 
+	public void testDiscardNotification(){
+       solo.clickOnButton("Create");
+       solo.enterText(0, "DiscardNotification");
+ 	   solo.enterText(1,"Test for DiscardNotification");
+ 	   solo.enterText(2, "-35.8,25.2");
+ 	   solo.enterText(3,"blue");
+ 	   solo.clickOnButton("None");
+ 	   solo.hideSoftKeyboard();
+       solo.clickOnButton("Create the PlaceIt");
+ 	   
+       solo.clickOnButton("Active");
+ 	   solo.clickOnText("Title: DiscardNotification");
+ 	   solo.takeScreenshot();
+ 	   
+ 	   Calendar c = Calendar.getInstance();
+ 	   boolean info = solo.searchText("Date to be Reminded: " + c.get(Calendar.MONTH) + "/" + c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.YEAR) ) 
+ 			      &&  solo.searchText("Description: Test for DiscardNotification");
+ 	   //assertTrue("DiscardNotification test failed",info);
+ 	   solo.clickOnButton(2);//Move to Pulled-Down
+ 	   solo.takeScreenshot();
+ 	   info = solo.searchText("Title: DiscardNotification");
+ 	   assertFalse("DiscardNotification is still in the Active List",info);
+ 	   
+ 	   solo.goBack();
+ 	   solo.clickOnButton("Pulled");
+ 	   solo.clickOnText("Title: DiscardNotification");
+ 	   solo.clickOnButton("Discard");
+ 	   solo.takeScreenshot();
+ 	   info = solo.searchText("Title: DiscardNotification");
+ 	   assertFalse(info);
+ 	   
  	}
- 	
- 	//write a method for then
- 	/*void testTheMapShouldShow(){
- 	  if(mActivity == null){
- 		  assertTrue(false);
- 	  }
- 	  else{
- 		  assertTrue(true);
- 	  }
- 	}*/
- 	
- 	//when for test place it
- 	/*static void enterAddreass(){
- 		LatLng sydney = new LatLng(-33.867, 151.206);
- 		//map.setMyLocation(sydney);
- 	}*/
- 
-  
-    public static void testCorrectDisplayMap(){
-     gpsEnabled();
-     applicationOpened();
-     /*testTheMapShouldShow();
-     //pass the test if the map is correctly created
-    	 assertTrue(true);
-  
-     else {
-       assertTrue(false);
-     }*/
-    }
-    
-    public void testSetValidPlaceIt(){
-    	gpsEnabled();
-    	applicationOpened();
-    	assertNotNull(mActivity);
-    }
-  
-  
-  /*private static void sendBroadcast(Intent poke) {
-	// TODO Auto-generated method stub
-  }
+	
+	/* Scenarios 2,3 to be written ...
+	 * maybe using Mock Object
+	 */
 
-  private static ContentResolver getContentResolver() {
-	// TODO Auto-generated method stub
-	return null;
-}*/
-
-}
+	/* Method Name: testCreateButton()
+	 * Description: Given the user click on the create button
+	 * 				Then the template is popped up for user to fill in the PlaceIt info
+	 * 				And the user clicks on the Cancel button
+	 * 				Then the PlaceIt is not created
+	 * 				And the PlaceIt is not in the Active List and PulledDown List
+	 */
+	public void testCreateButton(){
+      //click on the create button should popped out a new page
+      solo.clickOnButton("Create");
+	  solo.enterText(0, "Marker1");
+	  solo.enterText(1,"Create Marker1");
+	  solo.enterText(2, "-30.2,20.2");
+	  solo.enterText(3,"blue");
+	  solo.clickOnButton("1 Week");
+	  
+	  assertTrue(solo.getEditText(0).getText().toString().equals("Marker1"));
+	  assertTrue(solo.getEditText(1).getText().toString().equals("Create Marker1"));
+	  assertTrue(solo.getEditText(2).getText().toString().equals("-30.2,20.2"));
+	  assertTrue("No date to be entered",solo.searchText("February 2014"));
+	  assertTrue(solo.getEditText(3).getText().toString().equals("blue"));
+	  assertTrue(solo.isRadioButtonChecked("1 Week"));
+	  
+	  //test the cancel button in the create template
+	  solo.clickOnButton("Cancel");
+	  solo.clickOnButton("Active");
+	  solo.takeScreenshot();
+	  assertFalse("Marker1 should not be in the Active List",solo.searchText("Marker1"));
+	  
+	  solo.goBackToActivity("MainActivity");
+	  solo.clickOnButton("Pulled");
+	  assertFalse("Marker1 should not be in the Pulled List",solo.searchText("Marker1"));
+	  
+	  solo.goBackToActivity("MainActivity");
+	  solo.clickOnButton("Create");
+	  solo.enterText(0, "Create Button");
+	  solo.enterText(1,"Test for create button");
+	  solo.enterText(2, "-30.2,20.2");
+	  solo.enterText(3,"blue");
+	  solo.clickOnButton("2 Weeks");
+	  solo.clickOnButton("Create the PlaceIt");
+	  solo.clickOnButton("Active");
+	  boolean createPlaceIt = solo.searchText("Title: Create Button");
+	  assertTrue(createPlaceIt);	  
+	  }
+	
+	/* Method Name: testActiveList
+	 * Description: 
+	 *   Given the user create the PlaceIt
+	 *   Then the user goes to the Active List
+	 *   Then the user should see the PlaceIt showing in the Active List
+	 *   And the user click on the PlaceIt to review it
+	 *   When the user clicks the OK button after reviewing it
+	 *   Then app goes back to Active List page and the PlaceIt is still in the Active List
+	 *   And then the user clicks on the Discard Button
+	 *   Then the PlaceIt should not showing in both Active List and PulledDown List
+	 */
+	public void testActiveList(){
+		solo.clickOnButton("Create");
+		solo.enterText(0, "Test1");
+		solo.enterText(1,"Create Test1");
+		solo.enterText(2, "-30.2,20.2");
+		solo.enterText(3,"Blue");
+		solo.clickOnButton("2 Weeks");
+		solo.clickOnButton("Create the PlaceIt");
+		
+		solo.clickOnButton("Active");
+		assertTrue(solo.searchText("Test1"));
+	
+		solo.clickOnText("Title: Test1");
+		solo.clickOnButton("OK");
+		solo.takeScreenshot();
+		boolean test1 = solo.searchText("Title: Test1");
+		assertTrue(test1);
+		
+		solo.clickOnText("Title: Test1");
+		solo.clickOnButton("Discard");
+		solo.takeScreenshot();
+		test1 = solo.searchText("Title: Test1");
+		assertFalse(test1);
+		solo.goBack();
+		solo.clickOnButton("Pulled");
+		test1 = solo.searchText("Title: Test1");
+		assertFalse(test1);
+   }
+	
+	public void testRepostButton(){
+		solo.clickOnButton("Create");
+		solo.enterText(0,"TestRepost");
+		solo.enterText(1,"Test for repost")
+;		
+		
+		
+		
+	}
+	
+    /* create a marker and then check if it in the active list
+	 * check if the title,description,blue,date,color are correct
+	 */
+}//end of class
