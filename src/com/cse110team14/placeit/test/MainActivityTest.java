@@ -1,7 +1,6 @@
 package com.cse110team14.placeit.test;
 
 import java.util.Calendar;
-
 import com.cse110team14.placeit.MainActivity;
 import com.robotium.solo.Solo;
 import android.test.ActivityInstrumentationTestCase2;
