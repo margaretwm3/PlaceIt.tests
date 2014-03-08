@@ -31,15 +31,27 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		solo.finishOpenedActivities();
 	}
 	
+	/* Function name : testRegisterUI
+	 * Description: To test the UI of the register form
+	 */
+	public void testRegisterUI(){
+	    solo.clickOnButton("Register Now");
+		solo.takeScreenshot();
+		boolean registerUI = solo.searchText("Username")
+							  && solo.searchText("Password")
+							  && solo.searchText("repeat password");
+		assertTrue("Register UI is not as expected",registerUI);
+	}
+	
 	/* Function name: testLoginUI
 	 * Description : This method is to test the UI of Login form
 	 */
 	public void testLoginUI(){
 		solo.takeScreenshot();
 		boolean loginUI = solo.searchText("Username")
-						&& solo.searchText("Password")
-		  				&& solo.searchText("Sign In")
-		  				&& solo.searchText("Register Now");
+					   && solo.searchText("Password")
+		  			   && solo.searchText("Sign In")
+		  			   && solo.searchText("Register Now");
 		assertTrue("The login UI is not as expected",loginUI);
 	}
 	
@@ -53,14 +65,21 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 	 */
 	public void testRegister(){
 		solo.clickOnButton("Register Now");
-		solo.enterText(0, "Margaretwm3");
-		solo.enterText(1, "1234abc!!!");
-		solo.enterText(2,"1234abc!!！");
+		solo.enterText(0, "wms");
+		solo.enterText(1, "wm3");
+		solo.enterText(2, "wm3");
 		solo.clickOnButton("Sign Up");
-		//After registeration, should go to the sign up page
+		//solo.waitForDialogToOpen();
+	    //After registeration, should go to the sign up page
 		solo.takeScreenshot();
-		boolean loginPage = solo.searchText("Sign In");
-		assertTrue("After register, should go to login page",loginPage);
+		boolean success = solo.searchText("Sign In")
+				       && solo.searchText("Register Now");
+		assertTrue("After signup should go to login page",success);
+		
+		/* After the first time regsiter test, it should appear user has already registered */
+		solo.waitForDialogToOpen();
+		boolean errMsg = solo.searchText("Username has already registered!");
+		assertTrue("Error message is wrong",errMsg);
 	}
 	
 	/* Function name testSuccessfulLogin
@@ -72,13 +91,18 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
      *    Then the user is logged into their Place-It account
      */
 	public void testSuccessfulLogin(){
-		solo.enterText(0, "Margaretwm3");
-		solo.enterText(1,"1234abc!!!");
+		solo.enterText(0, "wms");
+		solo.enterText(1,"wm3");
 		solo.clickOnButton("Sign In");
 	    solo.takeScreenshot();
-		boolean appStart = solo.searchText("Sign Up")
-				        && solo.searchText("Register Now");
-		assertFalse("The app should start after log in",appStart);
+		boolean err = solo.searchText("Sign In")
+				   && solo.searchText("Register Now");
+		assertFalse("The app should start after log in",err);
+		
+		boolean appStart = solo.searchText("Find")
+				          && solo.searchText("Active")
+		    			 && solo.searchText("Create");
+		assertTrue("The app is not correctly start",appStart);
 	}
 	
 	/* Function name: testInvalidPwd
@@ -89,8 +113,8 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 	 *     Then error msg should appear and the user can not start the application
 	 */
 	public void testInvalidPwd(){
-		solo.enterText(0, "Margaretwm3");
-		solo.enterText(1,"abc1234");
+		solo.enterText(0, "wms");
+		solo.enterText(1,"abcd1234");
 		solo.clickOnButton("Sign In");
 		solo.waitForDialogToOpen();
 		solo.takeScreenshot();
@@ -112,15 +136,16 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 	 */
 	public void testDuplicateUserName(){
 	  solo.clickOnButton("Register Now");
-	  solo.enterText(0, "Margaretwm3");
+	  solo.enterText(0, "wms");
 	  solo.enterText(1, "abcdefg");
 	  solo.enterText(2,"abcdefg");
 	  solo.clickOnButton("Sign Up");
 	  solo.takeScreenshot();
-	  /*solo.waitForDialogToOpen();
-	  solo.searchText("Error");
-	 */
+	  solo.waitForDialogToOpen();
 	  solo.takeScreenshot();
+	  boolean errMsg = solo.searchText("Username has already registered!");
+	  assertTrue("Error message is not showing",errMsg);
+	 
 	  boolean notStart = solo.searchText("Sign In")
 			  		 &&  solo.searchText("Register Now");
 	  assertFalse("Duplicate account register is not allowed",notStart);
@@ -157,6 +182,10 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 	  solo.enterText(0,"wmswmswms");
 	  solo.clickOnButton("Sign Up");
 	  solo.takeScreenshot();
+	  boolean errorMsg = solo.searchText("Error")
+		  		&&   solo.searchText("Password can't be empty");
+	  assertTrue("Erro message for missing username is not as expected",errorMsg);
+	 
 	  boolean error = solo.searchText("Sign In")
 			       && solo.searchText("Register Now");
 	  assertFalse("Missing username should not be able to sign up",error);
@@ -171,9 +200,14 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 	 */
 	public void testRegisterMissingPwd(){
 		  solo.	clickOnButton("Register Now");
-		  solo.enterText(2,"test1");
+		  solo.enterText(1,"test1");
+		  solo.enterText(2, "test1");
 		  solo.clickOnButton("Sign Up");
 		  solo.takeScreenshot();
+		  boolean errorMsg = solo.searchText("Error")
+			  		&&   solo.searchText("User name can't be empty");
+		  assertTrue("Error message for missing password is not as expected",errorMsg);
+		 
 		  boolean error = solo.searchText("Sign In")
 				       && solo.searchText("Register Now");
 		  assertFalse("Missing username should not be able to sign up",error);
@@ -192,20 +226,11 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		solo.enterText(2,"wrongpwd");
 		solo.clickOnButton("Sign Up");
 		solo.takeScreenshot();
-		boolean noLogin = solo.searchText("Sign In");
+		boolean errorMsg = solo.searchText("Error")
+			  		&&   solo.searchText("Repeat password is not consistent");
+		
+		 boolean noLogin = solo.searchText("Sign In");
 		assertFalse("Wrong pwd should not let user register",noLogin);
-	}
-	
-	/* Function name : testRegisterUI
-	 * Description: To test the UI of the register form
-	 */
-	public void testRegisterUI(){
-	    solo.clickOnButton("Register Now");
-		solo.takeScreenshot();
-		boolean registerUI = solo.searchText("Username")
-							  && solo.searchText("Password")
-							  && solo.searchText("repeat password");
-		assertTrue("Register UI is not as expected",registerUI);
 	}
 	
 	/* Function name: testInvalidUsernameLogin
@@ -222,13 +247,10 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		//password is the correct password for username Margaretwm3
 		solo.enterText(1,"1234abc!!!");
 		solo.clickOnButton("Sign In");
+		solo.waitForDialogToOpen();
 		solo.takeScreenshot();
-		boolean loginFailed = solo.searchText("Sign In") && 
-							 solo.searchText("Register Now");
-		assertTrue("The application should not start",loginFailed);
-		boolean appStart = solo.searchText("Find") && solo.searchText("Create")
-						&& solo.searchText("Active");
-		assertFalse("The application is start which it shouldn't",appStart);
+		boolean errMsg = solo.searchText("User name or Password is incorrect");
+		assertTrue("Error message should appear",errMsg);
 	}
 	
 	public void testRememberUser(){
