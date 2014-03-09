@@ -31,6 +31,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.finishOpenedActivities();
 	}
 	
+	/* Descriptino: this application is used to login in before the test */
+	public void testA(){
+		solo.enterText(0, "aa");
+		solo.enterText(1, "aa");
+		solo.clickOnButton("Sign In");
+		assertTrue(true);
+    }
+	
 	/* Method name: testShowMap
 	 * Description: Scenario test for User Story 1
 	 *   Scenario 1: Given the GPS is enabled,
