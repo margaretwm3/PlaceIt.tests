@@ -31,14 +31,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.finishOpenedActivities();
 	}
 	
-	/* Descriptino: this application is used to login in before the test */
-	public void testA(){
-		solo.enterText(0, "aa");
-		solo.enterText(1, "aa");
-		solo.clickOnButton("Sign In");
-		assertTrue(true);
-    }
-	
 	/* Method name: testShowMap
 	 * Description: Scenario test for User Story 1
 	 *   Scenario 1: Given the GPS is enabled,
@@ -179,20 +171,29 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	 *   Then the placeIt is no longer available for review
 	 */
 	public void testPulled(){
+		solo.clickOnButton("Create");
+		solo.enterText(0, "TestPulledDown");
+		solo.enterText(1, "Test pulled function");
+		solo.enterText(2,"-20,-80");
+		solo.enterText(3,"Red");
+		solo.clickOnButton("None");
+		solo.hideSoftKeyboard();
+		solo.clickOnButton("Create the PlaceIt");
 		solo.clickOnButton("Active");
-		solo.clickOnText("Firstone");//delete the previous PlaceIt from the Active List
+		solo.scrollToBottom();
+		solo.clickOnText("Title: TestPulledDown");//delete the PlaceIt from the Active List
 		//try to delete the Test1 marker from the active list
 		solo.clickOnButton(2); //Moved to pulled down list
 		//try to go to the main menu and check the pulled down list
 		solo.goBackToActivity("MainActivity");
 		solo.clickOnButton("Pulled");
 		solo.takeScreenshot();
-		boolean isThere = solo.searchText("Firstone");
-		assertTrue("Test1 should be in the pulled down list",isThere);
+		boolean isThere = solo.searchText("TestPulledDown");
+		assertTrue("TestPulledDown should be in the pulled down list",isThere);
 		solo.goBack();
 		solo.clickOnButton("Active");
 		solo.takeScreenshot();
-		boolean isNotThere = solo.searchText("Firstone");
+		boolean isNotThere = solo.searchText("TestPulledDown");
 		assertFalse("The deleted PlaceIt is still in active list",
 				    isNotThere);
 	}
@@ -297,7 +298,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	  assertTrue(solo.getEditText(0).getText().toString().equals("Marker1"));
 	  assertTrue(solo.getEditText(1).getText().toString().equals("Create Marker1"));
 	  assertTrue(solo.getEditText(2).getText().toString().equals("-30.2,20.2"));
-	  assertTrue("No date to be entered",solo.searchText("February 2014"));
+	  assertTrue("No date to be entered",solo.searchText("March 2014"));
 	  assertTrue(solo.getEditText(3).getText().toString().equals("blue"));
 	  assertTrue(solo.isRadioButtonChecked("1 Week"));
 	  
@@ -367,14 +368,34 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	public void testRepostButton(){
 		solo.clickOnButton("Create");
 		solo.enterText(0,"TestRepost");
-		solo.enterText(1,"Test for repost")
-;		
+		solo.enterText(1,"Test for repost");
+		solo.enterText(2, "-20,50");
+		solo.enterText(3,"Blue");
+		solo.clickOnButton("None");
+		solo.clickOnButton("Create the PlaceIt");
 		
+		solo.clickOnButton("Active");
+		solo.takeScreenshot();
+		boolean inActive = solo.searchText("TestRepost");
+		assertTrue("TestRespot should be in the Active List",inActive);
+		solo.clickOnButton(2); // move to pulled down
+		solo.takeScreenshot();
+		boolean notInActive = solo.searchText("TestRepost");
+		assertFalse("TestRepost should be moved to PulledDown list",notInActive);
 		
+		solo.goBack();
+		solo.clickOnButton("Pulled");
+		solo.clickOnText("TestRepost");
+		solo.clickOnButton("Repost");
+		solo.clickOnButton("45 min later");
+		solo.takeScreenshot();
+		boolean notInPulledDown = solo.searchText("TestRepost");
+		assertTrue("TestRepost should back to Active List",notInPulledDown);
 		
+		solo.goBack();
+		solo.clickOnButton("Active");
+		solo.takeScreenshot();
+		boolean back = solo.searchText("TestRepost");
+		assertTrue("TestRepost should be back into the Active List",back);
 	}
-	
-    /* create a marker and then check if it in the active list
-	 * check if the title,description,blue,date,color are correct
-	 */
 }//end of class

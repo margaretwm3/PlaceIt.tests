@@ -1,6 +1,8 @@
 package com.cse110team14.placeit.test;
 
 //import junit.framework.TestCase;
+import java.util.Calendar;
+
 import com.robotium.solo.Solo;
 import android.test.ActivityInstrumentationTestCase2;
 import com.cse110team14.placeit.*;
@@ -90,7 +92,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
      *    When entering a valid combination of username and password
      *    Then the user is logged into their Place-It account
      */
-	public void testSuccessfulLogin(){
+	/*public void testSuccessfulLogin(){
 		solo.enterText(0, "wms");
 		solo.enterText(1,"wm3");
 		solo.clickOnButton("Sign In");
@@ -100,10 +102,10 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		assertFalse("The app should start after log in",err);
 		
 		boolean appStart = solo.searchText("Find")
-				          && solo.searchText("Active")
-		    			 && solo.searchText("Create");
+				        && solo.searchText("Active")
+		    			&& solo.searchText("Create");
 		assertTrue("The app is not correctly start",appStart);
-	}
+	}*/
 	
 	
 	/* Function name: testInvalidPwd
@@ -184,7 +186,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 	  solo.clickOnButton("Sign Up");
 	  solo.takeScreenshot();
 	  boolean errorMsg = solo.searchText("Error")
-		  		&&   solo.searchText("User name and password can't be empty");
+		  		&&   solo.searchText("User and password can't be empty!");
 	  assertTrue("Erro message for missing username is not as expected",errorMsg);
 	 
 	  boolean error = solo.searchText("Sign In")
@@ -206,7 +208,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		  solo.clickOnButton("Sign Up");
 		  solo.takeScreenshot();
 		  boolean errorMsg = solo.searchText("Error")
-			  		&&   solo.searchText("User name and password can't be empty");
+			  		&&   solo.searchText("User and password can't be empty!");
 		  assertTrue("Error message for missing password is not as expected",errorMsg);
 		 
 		  boolean error = solo.searchText("Sign In")
@@ -253,6 +255,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		boolean errMsg = solo.searchText("User name or Password is incorrect");
 		assertTrue("Error message should appear",errMsg);
 	}
+	
 	/*
 	public void testLogOutButton(){
 		solo.enterText(0, "aa");
@@ -270,8 +273,10 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
       }
 	*/
 	public void testRememberUser(){
-		solo.enterText(0, "Margaretwm3");
-		solo.enterText(1, "1234abc!!!");
+		//first need to log out to test this function */
+		/*solo.clickOnButton("Log Out");*/
+		solo.enterText(0, "aa");
+		solo.enterText(1, "aa");
 		solo.clickOnButton("Sign In");
 		
 		solo.takeScreenshot();
@@ -294,4 +299,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 		assertTrue("The app correctly remember the user",rememberUser);
 		assertFalse("The app does not remember the user",failToRemember);
 	}
+	
+	
+
 }
