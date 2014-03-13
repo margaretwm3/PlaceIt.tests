@@ -8,6 +8,8 @@ import com.cse110team14.placeit.*;
 
 /* 
  * Class name: Tests for implementation of MainActivity
+ * Description : Modify the test to meet the requirement of the MS2
+ * Date : 3/11/14
  * 
  */
 
@@ -106,7 +108,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(1, "First one");//description
 		solo.enterText(2,"20,30");//location
 		solo.enterText(3,"Red");//color
-		solo.clickOnButton("1 Week");//repost period
+		solo.clickOnButton("None");//repost period
 		solo.clickOnButton("Create the PlaceIt");
 		
 		//Create the second marker at the same location
@@ -115,7 +117,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(1, "Second one");
 		solo.enterText(2,"20,30");
 		solo.enterText(3,"Blue");
-		solo.clickOnButton("2 Weeks");
+		solo.clickOnButton("None");
 		solo.clickOnButton("Create the PlaceIt");
 		
 		//Create the third marker at the same location
@@ -124,7 +126,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(1, "Third one");
 		solo.enterText(2,"20,30");
         solo.enterText(3,"Blue");
-		solo.clickOnButton("2 Weeks");
+		solo.clickOnButton("None");
 		solo.clickOnButton("Create the PlaceIt");
 		//Check the active list
 		solo.clickOnButton("Active");
@@ -148,7 +150,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(1, "Test marker for review PlaceIt");
 		solo.enterText(2,"-20,-70");
 		solo.enterText(3,"Blue");
-		solo.clickOnButton("Minute");
+		solo.clickOnButton("None");
 		solo.hideSoftKeyboard();
 		solo.clickOnButton("Create the PlaceIt");
 		solo.clickOnButton("Active");
@@ -210,7 +212,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(1, "User Story 3 testPulledDown");
 		solo.enterText(2,"-30,-20");
 		solo.enterText(3,"Blue");
-		solo.clickOnButton("1 Week");
+		solo.clickOnButton("None");
 		solo.hideSoftKeyboard();
 		solo.clickOnButton("Create the PlaceIt");
 		
@@ -293,14 +295,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	  solo.enterText(1,"Create Marker1");
 	  solo.enterText(2, "-30.2,20.2");
 	  solo.enterText(3,"blue");
-	  solo.clickOnButton("1 Week");
+	  solo.clickOnButton("None");
 	  
 	  assertTrue(solo.getEditText(0).getText().toString().equals("Marker1"));
 	  assertTrue(solo.getEditText(1).getText().toString().equals("Create Marker1"));
 	  assertTrue(solo.getEditText(2).getText().toString().equals("-30.2,20.2"));
 	  assertTrue("No date to be entered",solo.searchText("March 2014"));
 	  assertTrue(solo.getEditText(3).getText().toString().equals("blue"));
-	  assertTrue(solo.isRadioButtonChecked("1 Week"));
+	  assertTrue(solo.isRadioButtonChecked("None"));
 	  
 	  //test the cancel button in the create template
 	  solo.clickOnButton("Cancel");
@@ -318,7 +320,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	  solo.enterText(1,"Test for create button");
 	  solo.enterText(2, "-30.2,20.2");
 	  solo.enterText(3,"blue");
-	  solo.clickOnButton("2 Weeks");
+	  solo.clickOnButton("None");
 	  solo.clickOnButton("Create the PlaceIt");
 	  solo.clickOnButton("Active");
 	  boolean createPlaceIt = solo.searchText("Title: Create Button");
@@ -342,7 +344,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(1,"Create Test1");
 		solo.enterText(2, "-30.2,20.2");
 		solo.enterText(3,"Blue");
-		solo.clickOnButton("2 Weeks");
+		solo.clickOnButton("None");
 		solo.clickOnButton("Create the PlaceIt");
 		
 		solo.clickOnButton("Active");
@@ -372,13 +374,15 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.enterText(2, "-20,50");
 		solo.enterText(3,"Blue");
 		solo.clickOnButton("None");
+		solo.hideSoftKeyboard();
 		solo.clickOnButton("Create the PlaceIt");
 		
 		solo.clickOnButton("Active");
 		solo.takeScreenshot();
-		boolean inActive = solo.searchText("TestRepost");
+		boolean inActive = solo.searchText("Title: TestRepost");
 		assertTrue("TestRespot should be in the Active List",inActive);
-		solo.clickOnButton(2); // move to pulled down
+		
+		solo.clickOnButton(2); //move to pulled down
 		solo.takeScreenshot();
 		boolean notInActive = solo.searchText("TestRepost");
 		assertFalse("TestRepost should be moved to PulledDown list",notInActive);
@@ -390,7 +394,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.clickOnButton("45 min later");
 		solo.takeScreenshot();
 		boolean notInPulledDown = solo.searchText("TestRepost");
-		assertTrue("TestRepost should back to Active List",notInPulledDown);
+		assertFalse("TestRepost should back to Active List",notInPulledDown);
 		
 		solo.goBack();
 		solo.clickOnButton("Active");

@@ -54,5 +54,35 @@ public class MultipleUserTest extends ActivityInstrumentationTestCase2<LoginActi
     solo.clickOnButton("Sign In");
     solo.assertCurrentActivity("Should be in MainActivity", MainActivity.class);
  }
-
+  
+  public void testCreateInOneAccount(){
+     solo.clickOnButton("Log out");
+     solo.enterText(0, "wms");
+     solo.enterText(1,"wm3");
+     solo.clickOnButton("Sign In");
+     
+     solo.clickOnButton("Create");
+     solo.enterText(0, "TestA");
+     solo.enterText(1,"test in create in on account");
+     solo.enterText(3, "-90,40");
+     solo.enterText(4, "Blue");
+     solo.clickOnButton("None");
+     solo.hideSoftKeyboard();
+     solo.clickOnButton("Create the PlaceIt");
+     solo.clickOnButton("Active");
+     solo.takeScreenshot();
+     boolean inActive = solo.searchText("TestA");
+     assertTrue("The placeit is not in the Active List",inActive);
+     
+     solo.goBack();
+     solo.clickOnButton("Log Out");
+     solo.enterText(0, "aa");
+     solo.enterText(1,"aa");
+     solo.clickOnButton("Sign In");
+     solo.clickOnButton("Active");
+     solo.takeScreenshot();
+     boolean notInActive = solo.searchText("TestA");
+     assertFalse("The placeit should not be in the aa's Active List",notInActive);
+   }
+  
 }
