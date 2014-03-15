@@ -2,6 +2,10 @@ package com.cse110team14.placeit.test;
 
 import com.robotium.solo.Solo;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.cse110team14.placeit.*;
 import com.cse110team14.placeit.model.CPlaceIts;
 
@@ -27,7 +31,7 @@ public class CategoricalPlaceItTest extends ActivityInstrumentationTestCase2<Mai
      
     /* Function nameL testCategoricalUI
      * Description: This function is used to test the UI to create categorical placeit
-     *              Make sure the information is all providede in the UI
+     *              Make sure the information is all provideded in the UI
      */
      public void testCategoricalUI(){
     	solo.clickOnButton("Create");
@@ -62,12 +66,19 @@ public class CategoricalPlaceItTest extends ActivityInstrumentationTestCase2<Mai
       solo.enterText(1,"Test CPlaceIts");
       solo.hideSoftKeyboard();
       
+      View view1 = solo.getView(Spinner.class,0);
+  	  solo.clickOnView(view1);
+  	  solo.scrollToTop();
+  	  solo.clickOnView(solo.getView(TextView.class,3));
+  	  solo.goBack();
+  	  solo.clickOnButton("Create the PlaceIt");
+      
       //select up to three categories in total
-      solo.pressSpinnerItem(0, 3);
+      //solo.pressSpinnerItem(0, 3);
       //assertTrue("aquarium should be selected",solo.isSpinnerTextSelected("aquarium"));
-      solo.clickOnButton("Create the PlaceIt");
+      //solo.clickOnButton("Create the PlaceIt");
      
-      //look into the active list 
+      //look into the active list and the CPlaceIts should be there
       solo.clickOnButton("Active");
       solo.takeScreenshot();
       boolean inActive = solo.searchText("CPlaceItsTest1");
@@ -88,8 +99,16 @@ public class CategoricalPlaceItTest extends ActivityInstrumentationTestCase2<Mai
        solo.hideSoftKeyboard();
        solo.clickOnButton("Create Category PlaceIts");
        solo.enterText(1,"Without title");
-       solo.pressSpinnerItem(0, 0);
-       solo.clickOnButton("Create the PlaceIt");
+       
+       View view1 = solo.getView(Spinner.class,0);
+	   solo.clickOnView(view1);
+	   solo.scrollToTop();
+	   solo.clickOnView(solo.getView(TextView.class,5));
+	   solo.goBack();
+	   solo.clickOnButton("Create the PlaceIt");
+       
+       //solo.pressSpinnerItem(0, 0);
+       //solo.clickOnButton("Create the PlaceIt");
        solo.waitForDialogToOpen();
        solo.takeScreenshot();
        boolean errMsg = solo.searchText("No Title Entered")
@@ -116,8 +135,16 @@ public class CategoricalPlaceItTest extends ActivityInstrumentationTestCase2<Mai
     	solo.hideSoftKeyboard();
     	solo.clickOnButton("Create Category PlaceIts");
     	solo.enterText(0,"Without Description");
-    	solo.pressSpinnerItem(0, 6);
+    	
+    	View view1 = solo.getView(Spinner.class,0);
+    	solo.clickOnView(view1);
+    	solo.scrollToTop();
+    	solo.clickOnView(solo.getView(TextView.class,6));
+    	solo.goBack();
     	solo.clickOnButton("Create the PlaceIt");
+    	
+    	//solo.pressSpinnerItem(0, 6);
+    	//solo.clickOnButton("Create the PlaceIt");
     	solo.waitForDialogToOpen();
     	solo.takeScreenshot();
         boolean errMsg = solo.searchText("No Description Entered")
@@ -126,56 +153,114 @@ public class CategoricalPlaceItTest extends ActivityInstrumentationTestCase2<Mai
         solo.clickOnButton("Ok");
      }
     
-    /* Function name: testReviewPlaceIts
+    /* Function name: testNoCategorySelected
      * Description: 
+     *   Scenario:
+     *     Given the user 
+     *     When he wants to create a categorical placeit
+     *     And he select no category
+     *     Then the placeit should not be created 
+     *     And the error message should appear
      */
-    public void testReviewPlaceIts(){
+    public void testNoCategorySelected(){
     	solo.clickOnButton("Create");
     	solo.enterText(0,"nothing");
-    	solo.hideSoftKeyboard();
-    	solo.clickOnButton("Create Category PlaceIts");
-    	solo.enterText(0, "Review CPlaceIts");
-    	solo.enterText(1,"Test review CPlaceIts");
-    	solo.pressSpinnerItem(0, 0);
-    	assertTrue("accounting should be selected",solo.isSpinnerTextSelected("accounting"));
-    	
-    	solo.pressSpinnerItem(0, 3);
-    	solo.pressSpinnerItem(0, 2);
+        solo.hideSoftKeyboard();
+        solo.clickOnButton("Create Category PlaceIts");
+        solo.enterText(0,"TestNoCategorySelected");
+        solo.enterText(1,"Test no category selected");
         solo.clickOnButton("Create the PlaceIt");
-    	
-    	solo.clickOnButton("Active");
-    	solo.clickOnText("Review CPlaceIts");
-    	solo.takeScreenshot();
-    	boolean des  = solo.searchText("Description: Test review CPlaceIts");
-    	//boolean cat = solo.searchText("Categories: accounting|airport|amusement_park");
-    	
-    	assertTrue("Description is not correct",des);
-    	//assertTrue("Categories are not correct",cat);
-    }
+        solo.waitForDialogToOpen();
+        solo.takeScreenshot();
+        boolean errMsg = solo.searchText("No category has been selected");
+        assertTrue("Error message is not appeared",errMsg);
+   }
     
+    /* Function name: testMoreThanLimitedSelected
+     * Description: 
+     *   Scenario:
+     *     Given the user 
+     *     When he wants to create a categorical placeit
+     *     And he select more than 3 categories
+     *     Then the placeit should not be created 
+     *     And the error message should appear
+     */
+    public void testMoreThanLimitedSelected(){
+    	solo.clickOnButton("Create");
+    	solo.enterText(0,"nothing");
+        solo.hideSoftKeyboard();
+        solo.clickOnButton("Create Category PlaceIts");
+        solo.enterText(0,"TestMoreSelected");
+        solo.enterText(1,"Test More categories selected");
+        
+        View view1 = solo.getView(Spinner.class,0);
+    	solo.clickOnView(view1);
+    	solo.scrollToTop();
+    	solo.clickOnView(solo.getView(TextView.class,5));
+    	//solo.goBack();
+    	solo.clickOnView(solo.getView(TextView.class,0));
+    	//solo.goBack();
+    	solo.clickOnView(solo.getView(TextView.class,10));
+    	//solo.goBack();
+    	solo.clickOnView(solo.getView(TextView.class,11));
+    	solo.goBack();
+    	solo.clickOnButton("Create the PlaceIt");
+        
+        
+        /*solo.pressSpinnerItem(0, 0);
+        solo.pressSpinnerItem(0, 5);
+        solo.pressSpinnerItem(0, 10);
+        solo.pressSpinnerItem(0, 7);
+        solo.clickOnButton("Create the PlaceIt");*/
+        solo.waitForDialogToOpen();
+        solo.takeScreenshot();
+        boolean errMsg = solo.searchText("You can not select more than 3 categories");
+        assertTrue("Error message is not appeared",errMsg);
+   }
     
-    public void testPlaceItsMovedToPulledDown()
-    {
-      solo.clickOnButton("Create");
-      solo.enterText(0,"nothing");
-      solo.hideSoftKeyboard();
-      solo.clickOnButton("Create Category PlaceIts");
-      solo.enterText(0,"TestPulledDown");
-      solo.enterText(1,"Test pull down CPlaceIts");
-      solo.pressSpinnerItem(0, 0);
-      solo.clickOnButton("Create the PlaceIt");
-      
-      solo.clickOnButton("Active");
-      solo.clickOnText("Title: TestPulledDown");
-      solo.clickOnButton("Move To Pulled-Down");
-      solo.takeScreenshot();
-      boolean notInActive = solo.searchText("Title: TestPulledDown");
-      assertFalse("The CPlaceIts should not be in the Active List",notInActive);
+   
+   /* Function name: testNotification
+    * Description:
+    *   Scenario:
+    *     Given the user has already logged in
+    *     When he create a CPlaceIt with one specific category
+    *     Then when he approaches one of the places in that category
+    *     And he will receive the notification including the address of the place 
+    */
+    public void testNotification(){
+	   solo.clickOnButton("Create");
+   	   solo.enterText(0,"nothing");
+       solo.hideSoftKeyboard();
+       solo.clickOnButton("Create Category PlaceIts");
+       solo.enterText(0,"TestNotification");
+       solo.enterText(1,"Test when one category matched, notification will appear");
        
-      solo.clickOnButton("Pulled");
-      solo.takeScreenshot();
-      boolean inPull = solo.searchText("Title: TestPulledDown");
-      assertTrue("The CPlaceIts should be in the pulled down",inPull);
-     }
-
-}
+       View view1 = solo.getView(Spinner.class,0);
+   	   solo.clickOnView(view1);
+       solo.scrollToTop();
+   	   solo.clickOnView(solo.getView(TextView.class,5));
+   	   solo.goBack();
+   	   solo.clickOnButton("Create the PlaceIt");
+   	
+       solo.clickOnButton("Active");
+       solo.takeScreenshot();
+       boolean inActive = solo.searchText("Title: TestNotification");
+       assertTrue("CPlaceIts should appear in the Active List",inActive);
+       
+       solo.goBack();
+       solo.clickOnButton("Refresh");
+       solo.sleep(1000);
+       solo.clickOnButton("Active");
+       solo.takeScreenshot();
+       boolean notInActive = solo.searchText("Title: TestNotification");
+       assertFalse("The CPlaceIts is still in Active List",notInActive);
+       
+       solo.goBack();
+       solo.clickOnButton("Pulled");
+       solo.takeScreenshot();
+       boolean inPulledDown = solo.searchText("Title: TestNotification");
+       assertTrue("CPlaceIts is not in the PulledDown",inPulledDown);
+       //go back for the next test
+       solo.goBack();
+   }
+ }

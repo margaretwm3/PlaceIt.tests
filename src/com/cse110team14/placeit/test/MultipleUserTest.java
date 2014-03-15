@@ -56,22 +56,22 @@ public class MultipleUserTest extends ActivityInstrumentationTestCase2<LoginActi
  }
   
   public void testCreateInOneAccount(){
-     solo.clickOnButton("Log out");
+     solo.clickOnButton("Log Out");
      solo.enterText(0, "wms");
      solo.enterText(1,"wm3");
      solo.clickOnButton("Sign In");
      
      solo.clickOnButton("Create");
-     solo.enterText(0, "TestA");
+     solo.enterText(0, "TestInWMS");
      solo.enterText(1,"test in create in on account");
-     solo.enterText(3, "-90,40");
-     solo.enterText(4, "Blue");
+     solo.enterText(2, "-30.2,20.2");
+     solo.enterText(3, "Blue");
      solo.clickOnButton("None");
      solo.hideSoftKeyboard();
      solo.clickOnButton("Create the PlaceIt");
      solo.clickOnButton("Active");
      solo.takeScreenshot();
-     boolean inActive = solo.searchText("TestA");
+     boolean inActive = solo.searchText("TestInWMS");
      assertTrue("The placeit is not in the Active List",inActive);
      
      solo.goBack();
@@ -81,7 +81,7 @@ public class MultipleUserTest extends ActivityInstrumentationTestCase2<LoginActi
      solo.clickOnButton("Sign In");
      solo.clickOnButton("Active");
      solo.takeScreenshot();
-     boolean notInActive = solo.searchText("TestA");
+     boolean notInActive = solo.searchText("TestInWMS");
      assertFalse("The placeit should not be in the aa's Active List",notInActive);
    }
   

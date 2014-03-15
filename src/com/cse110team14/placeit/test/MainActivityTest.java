@@ -165,119 +165,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		assertTrue("Template for review is missing something",review);	
 	}
 	
-	/* Method Name: testPulled()
-	 * Description: Scenario 4 
-	 *   Given a PlaceIt is available for review
-	 *   And the user chooses to delete the PlaceIt
-	 *   When the user confirms the delete
-	 *   Then the placeIt is no longer available for review
-	 */
-	public void testPulled(){
-		solo.clickOnButton("Create");
-		solo.enterText(0, "TestPulledDown");
-		solo.enterText(1, "Test pulled function");
-		solo.enterText(2,"-20,-80");
-		solo.enterText(3,"Red");
-		solo.clickOnButton("None");
-		solo.hideSoftKeyboard();
-		solo.clickOnButton("Create the PlaceIt");
-		solo.clickOnButton("Active");
-		solo.scrollToBottom();
-		solo.clickOnText("Title: TestPulledDown");//delete the PlaceIt from the Active List
-		//try to delete the Test1 marker from the active list
-		solo.clickOnButton(2); //Moved to pulled down list
-		//try to go to the main menu and check the pulled down list
-		solo.goBackToActivity("MainActivity");
-		solo.clickOnButton("Pulled");
-		solo.takeScreenshot();
-		boolean isThere = solo.searchText("TestPulledDown");
-		assertTrue("TestPulledDown should be in the pulled down list",isThere);
-		solo.goBack();
-		solo.clickOnButton("Active");
-		solo.takeScreenshot();
-		boolean isNotThere = solo.searchText("TestPulledDown");
-		assertFalse("The deleted PlaceIt is still in active list",
-				    isNotThere);
-	}
 	
 	
-	/* Method name: testDeletePulledDown
-	 * Description: Given the user created the PlaceIt
-	 * 				Then when the user review the PlaceIt in the Active List
-	 * 				And the user tries to delete it from the Active List
-	 * 				Then the PlaceIt goes to PulledDown List*/
-	public void testDeleteInPulledDown(){
-		solo.clickOnButton("Create");
-		solo.enterText(0, "DeleteInPulledDownList");
-		solo.enterText(1, "User Story 3 testPulledDown");
-		solo.enterText(2,"-30,-20");
-		solo.enterText(3,"Blue");
-		solo.clickOnButton("None");
-		solo.hideSoftKeyboard();
-		solo.clickOnButton("Create the PlaceIt");
-		
-		solo.clickOnButton("Active");
-		solo.clickOnText("Title: DeleteInPulledDownList");
-		solo.clickOnButton(2);
-		solo.goBackToActivity("MainActivity");
-		solo.clickOnButton("Pulled");
-		solo.takeScreenshot();
-		boolean deleted = solo.searchText("Title: DeleteInPulledDownList");
-		assertTrue("Delete failed",deleted);
-		
-		solo.goBackToActivity("MainActivity");
-		solo.clickOnButton("Active");
-		solo.takeScreenshot();
-		boolean activeDelete = solo.searchText("Title: DeleteInPulledDownList");
-	    assertFalse("Delete from Active List failed",activeDelete);
-	}
 	
-	/* Test for User Story 4 */
+    /* Test for User Story 4 */
 	
-	/* Method name : testDiscardNotification
-	 * Description: Scenario 1
-	 *   Given that a PlaceIt has been created
-	 *   And the user comes within 1/2 mile of the PlaceIt
-	 *   When the user receives the PlaceIt notification 
-	 *   And selects Discard
-	 *   Then the placeit becomes unavailable
-	 *   And is unavailable for review under the various list
-	 */
-	//Use Mocking to test notification 
-	public void testDiscardNotification(){
-       solo.clickOnButton("Create");
-       solo.enterText(0, "DiscardNotification");
- 	   solo.enterText(1,"Test for DiscardNotification");
- 	   solo.enterText(2, "-35.8,25.2");
- 	   solo.enterText(3,"blue");
- 	   solo.clickOnButton("None");
- 	   solo.hideSoftKeyboard();
-       solo.clickOnButton("Create the PlaceIt");
- 	   
-       solo.clickOnButton("Active");
- 	   solo.clickOnText("Title: DiscardNotification");
- 	   solo.takeScreenshot();
- 	   
- 	   Calendar c = Calendar.getInstance();
- 	   boolean info = solo.searchText("Date to be Reminded: " + c.get(Calendar.MONTH) + "/" + c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.YEAR) ) 
- 			      &&  solo.searchText("Description: Test for DiscardNotification");
- 	   //assertTrue("DiscardNotification test failed",info);
- 	   solo.clickOnButton(2);//Move to Pulled-Down
- 	   solo.takeScreenshot();
- 	   info = solo.searchText("Title: DiscardNotification");
- 	   assertFalse("DiscardNotification is still in the Active List",info);
- 	   
- 	   solo.goBack();
- 	   solo.clickOnButton("Pulled");
- 	   solo.clickOnText("Title: DiscardNotification");
- 	   solo.clickOnButton("Discard");
- 	   solo.takeScreenshot();
- 	   info = solo.searchText("Title: DiscardNotification");
- 	   assertFalse(info);
- 	   
- 	}
-	
-	/* Scenarios 2,3 to be written ...
+    /* Scenarios 2,3 to be written ...
 	 * maybe using Mock Object
 	 */
 
@@ -366,40 +259,4 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		test1 = solo.searchText("Title: Test1");
 		assertFalse(test1);
    }
-	
-	public void testRepostButton(){
-		solo.clickOnButton("Create");
-		solo.enterText(0,"TestRepost");
-		solo.enterText(1,"Test for repost");
-		solo.enterText(2, "-20,50");
-		solo.enterText(3,"Blue");
-		solo.clickOnButton("None");
-		solo.hideSoftKeyboard();
-		solo.clickOnButton("Create the PlaceIt");
-		
-		solo.clickOnButton("Active");
-		solo.takeScreenshot();
-		boolean inActive = solo.searchText("Title: TestRepost");
-		assertTrue("TestRespot should be in the Active List",inActive);
-		
-		solo.clickOnButton(2); //move to pulled down
-		solo.takeScreenshot();
-		boolean notInActive = solo.searchText("TestRepost");
-		assertFalse("TestRepost should be moved to PulledDown list",notInActive);
-		
-		solo.goBack();
-		solo.clickOnButton("Pulled");
-		solo.clickOnText("TestRepost");
-		solo.clickOnButton("Repost");
-		solo.clickOnButton("45 min later");
-		solo.takeScreenshot();
-		boolean notInPulledDown = solo.searchText("TestRepost");
-		assertFalse("TestRepost should back to Active List",notInPulledDown);
-		
-		solo.goBack();
-		solo.clickOnButton("Active");
-		solo.takeScreenshot();
-		boolean back = solo.searchText("TestRepost");
-		assertTrue("TestRepost should be back into the Active List",back);
-	}
 }//end of class
